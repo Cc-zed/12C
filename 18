@@ -1,0 +1,162 @@
+#include <iostream>
+
+using namespace std;
+
+const int MAX_ROWS = 100;
+const int MAX_COLS = 100;
+
+void addColumn(int matrix[MAX_ROWS][MAX_COLS], int numRows, int numCols, int columnToAdd[MAX_ROWS], int position) {
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = numCols; j > position; --j) {
+            matrix[i][j] = matrix[i][j - 1];
+        }
+        matrix[i][position] = columnToAdd[i];
+    }
+}
+
+void deleteColumn(int matrix[MAX_ROWS][MAX_COLS], int numRows, int numCols, int position) {
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = position; j < numCols - 1; ++j) {
+            matrix[i][j] = matrix[i][j + 1];
+        }
+    }
+}
+
+void cyclicShift(int matrix[MAX_ROWS][MAX_COLS], int numRows, int numCols, int shiftCount, char direction) {
+    int temp[MAX_COLS];
+    if (direction == 'r') {
+        for (int k = 0; k < shiftCount; ++k) {
+            for (int i = 0; i < numRows; ++i) {
+                temp[i] = matrix[i][numCols - 1];
+            }
+            for (int i = 0; i < numRows; ++i) {
+                for (int j = numCols - 1; j > 0; --j) {
+                    matrix[i][j] = matrix[i][j - 1];
+                }
+            }
+            for (int i = 0; i < numRows; ++i) {
+                matrix[i][0] = temp[i];
+            }
+        }
+    }
+    else if (direction == 'l') {
+        for (int k = 0; k < shiftCount; ++k) {
+            for (int i = 0; i < numRows; ++i) {
+                temp[i] = matrix[i][0];
+            }
+            for (int i = 0; i < numRows; ++i) {
+                for (int j = 0; j < numCols - 1; ++j) {
+                    matrix[i][j] = matrix[i][j + 1];
+                }
+            }
+            for (int i = 0; i < numRows; ++i) {
+                matrix[i][numCols - 1] = temp[i];
+            }
+        }
+    }
+    else if (direction == 'u') {
+        for (int k = 0; k < shiftCount; ++k) {
+            for (int i = 0; i < numCols; ++i) {
+                temp[i] = matrix[0][i];
+            }
+            for (int i = 0; i < numCols; ++i) {
+                for (int j = 0; j < numRows - 1; ++j) {
+                    matrix[j][i] = matrix[j + 1][i];
+                }
+            }
+            for (int i = 0; i < numCols; ++i) {
+                matrix[numRows - 1][i] = temp[i];
+            }
+        }
+    }
+    else if (direction == 'd') {
+        for (int k = 0; k < shiftCount; ++k) {
+            for (int i = 0; i < numCols; ++i) {
+                temp[i] = matrix[numRows - 1][i];
+            }
+            for (int i = 0; i < numCols; ++i) {
+                for (int j = numRows - 1; j > 0; --j) {
+                    matrix[j][i] = matrix[j - 1][i];
+                }
+            }
+            for (int i = 0; i < numCols; ++i) {
+                matrix[0][i] = temp[i];
+            }
+        }
+    }
+}
+
+int main() {
+    int matrix[MAX_ROWS][MAX_COLS];
+    int numRows, numCols;
+
+    cout << "Enter number of rows and columns (MxN): ";
+    cin >> numRows >> numCols;
+
+    cout << "Enter elements of the matrix:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            cin >> matrix[i][j];
+        }
+    }
+
+    cout << "Matrix before operations:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    int columnToAdd[MAX_ROWS];
+    int position, shiftCount;
+    char direction;
+
+    cout << "Enter elements of the column to add:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        cin >> columnToAdd[i];
+    }
+
+    cout << "Enter position to add the column: ";
+    cin >> position;
+
+    addColumn(matrix, numRows, numCols, columnToAdd, position);
+
+    cout << "Matrix after adding column:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols + 1; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    cout << "Enter position to delete column: ";
+    cin >> position;
+
+    deleteColumn(matrix, numRows, numCols + 1, position);
+
+    cout << "Matrix after deleting column:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    cout << "Enter number of times to shift: ";
+    cin >> shiftCount;
+    cout << "Enter direction of shift (u/d/l/r): ";
+    cin >> direction;
+
+    cyclicShift(matrix, numRows, numCols, shiftCount, direction);
+
+    cout << "Matrix after cyclic shift:" << endl;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
